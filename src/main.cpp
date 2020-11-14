@@ -10,7 +10,12 @@ const int IR1 = 6;
 const int IR2 = 7;
 const int IR3 = 8;
 const int UR1 = 9;
+
+const int SPEED = 255;
+const int SSPEED = 150;
+int slowmode = 0;
 void setup() {
+  Serial.begin(9600);
   pinMode(L1,OUTPUT);
   pinMode(L2,OUTPUT);
   pinMode(R1,OUTPUT);
@@ -30,25 +35,42 @@ void controlx(int A, int B){
   digitalWrite(R1, B>0?HIGH:LOW);
   digitalWrite(R2, B<0?HIGH:LOW);
 }
+void printmap(){
+  Serial.print(digitalRead(IR1));
+  Serial.print(digitalRead(IR2));
+  Serial.print(digitalRead(IR3));
+  Serial.print(' ');
+  Serial.print(digitalRead(UR1));
+  Serial.print('\n');
+}
 
 void loop() {
+  printmap();
   if(digitalRead(IR2)){
     if(digitalRead(IR1) && digitalRead(IR3)){
-
-      controlx(1024,1024);
-
+      if(slowmode){ controlx(0,0);slowmode=0; delay(300); }
+      controlx(SPEED,SPEED);
     } else if(digitalRead(IR1) && !digitalRead(IR3)){
-
-      controlx(0,1024);
-
+      if(!slowmode){ controlx(0,0);slowmode=1; delay(300);}
+      controlx(0,SSPEED);
     } else if(!digitalRead(IR1) && digitalRead(IR3)){
-      controlx(1024,0);
-
+      if(!slowmode){ controlx(0,0);slowmode=1; delay(300);}
+      controlx(SSPEED,0);
     } else if(!digitalRead(IR1) && !digitalRead(IR3)){
-      controlx(1024,1024);
+      if(slowmode){ controlx(0,0);slowmode=0; delay(300); }
+      controlx(SPEED,SPEED);
     }
   } else {
-    controlx(0,0);
+    if(digitalRead(IR1) && digitalRead(IR3)){
+      controlx(0,0);
+    } else if(digitalRead(IR1) && !digitalRead(IR3)){
+      if(!slowmode){ controlx(0,0);slowmode=1; delay(300);}
+      controlx(SSPEED,0);
+    } else if(!digitalRead(IR1) && digitalRead(IR3)){
+      if(!slowmode){ controlx(0,0);slowmode=1; delay(300);}
+      controlx(0,SSPEED);
+    } else if(!digitalRead(IR1) && !digitalRead(IR3)){
+      controlx(0,0);
+    }
   }
-  controlx(1024,1024);
 }
