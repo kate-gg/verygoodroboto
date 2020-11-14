@@ -48,26 +48,26 @@ void loop() {
   printmap();
   if(digitalRead(IR2)){
     if(digitalRead(IR1) && digitalRead(IR3)){
-      if(slowmode){ controlx(0,0);slowmode=0; delay(300); }
+      if(slowmode){ controlx(0,0);slowmode=0; delay(200); }
       controlx(SPEED,SPEED);
     } else if(digitalRead(IR1) && !digitalRead(IR3)){
-      if(!slowmode){ controlx(0,0);slowmode=1; delay(300);}
+      if(!slowmode){ controlx(0,0);slowmode=1; delay(200);}
       controlx(0,SSPEED);
     } else if(!digitalRead(IR1) && digitalRead(IR3)){
-      if(!slowmode){ controlx(0,0);slowmode=1; delay(300);}
+      if(!slowmode){ controlx(0,0);slowmode=1; delay(200);}
       controlx(SSPEED,0);
     } else if(!digitalRead(IR1) && !digitalRead(IR3)){
-      if(slowmode){ controlx(0,0);slowmode=0; delay(300); }
+      if(slowmode){ controlx(0,0);slowmode=0; delay(200); }
       controlx(SPEED,SPEED);
     }
   } else {
     if(digitalRead(IR1) && digitalRead(IR3)){
       controlx(0,0);
     } else if(digitalRead(IR1) && !digitalRead(IR3)){
-      if(!slowmode){ controlx(0,0);slowmode=1; delay(300);}
+      if(!slowmode){ controlx(0,0);slowmode=1; delay(200);}
       controlx(SSPEED,0);
     } else if(!digitalRead(IR1) && digitalRead(IR3)){
-      if(!slowmode){ controlx(0,0);slowmode=1; delay(300);}
+      if(!slowmode){ controlx(0,0);slowmode=1; delay(200);}
       controlx(0,SSPEED);
     } else if(!digitalRead(IR1) && !digitalRead(IR3)){
       controlx(0,0);
