@@ -11,8 +11,8 @@ const int IR2 = 7;
 const int IR3 = 8;
 const int UR1 = 9;
 
-const int SPEED = 255;
-const int SSPEED = 150;
+const int SPEED = 200;
+const int T_DELAY = 200;
 int slowmode = 0;
 void setup() {
   Serial.begin(9600);
@@ -27,7 +27,7 @@ void setup() {
   pinMode(IR3,INPUT);
   pinMode(UR1,INPUT);
 }
-void controlx(int A, int B){
+const void controlx(int A, int B){
   analogWrite(ENA, abs(A));
   analogWrite(ENB, abs(B));
   digitalWrite(L1, A>0?HIGH:LOW);
@@ -35,7 +35,7 @@ void controlx(int A, int B){
   digitalWrite(R1, B>0?HIGH:LOW);
   digitalWrite(R2, B<0?HIGH:LOW);
 }
-void printmap(){
+const void printmap(){
   Serial.print(digitalRead(IR1));
   Serial.print(digitalRead(IR2));
   Serial.print(digitalRead(IR3));
@@ -43,34 +43,31 @@ void printmap(){
   Serial.print(digitalRead(UR1));
   Serial.print('\n');
 }
+const void modeSW(const int X){ controlx(0,0);slowmode=X; delay(T_DELAY); }
 
 void loop() {
-  printmap();
   if(digitalRead(IR2)){
     if(digitalRead(IR1) && digitalRead(IR3)){
-      if(slowmode){ controlx(0,0);slowmode=0; delay(200); }
-      controlx(SPEED,SPEED);
+      if(slowmode){modeSW(0);} controlx(SPEED,SPEED);
     } else if(digitalRead(IR1) && !digitalRead(IR3)){
-      if(!slowmode){ controlx(0,0);slowmode=1; delay(200);}
-      controlx(0,SSPEED);
+      if(!slowmode){modeSW(1);} controlx(0,SPEED);
     } else if(!digitalRead(IR1) && digitalRead(IR3)){
-      if(!slowmode){ controlx(0,0);slowmode=1; delay(200);}
-      controlx(SSPEED,0);
+      if(!slowmode){modeSW(1);} controlx(SPEED,0);
     } else if(!digitalRead(IR1) && !digitalRead(IR3)){
-      if(slowmode){ controlx(0,0);slowmode=0; delay(200); }
-      controlx(SPEED,SPEED);
+      if(slowmode){modeSW(0);} controlx(SPEED,SPEED);
     }
   } else {
     if(digitalRead(IR1) && digitalRead(IR3)){
       controlx(0,0);
     } else if(digitalRead(IR1) && !digitalRead(IR3)){
-      if(!slowmode){ controlx(0,0);slowmode=1; delay(200);}
-      controlx(SSPEED,0);
+      if(!slowmode){modeSW(1);} controlx(SPEED,0);
     } else if(!digitalRead(IR1) && digitalRead(IR3)){
-      if(!slowmode){ controlx(0,0);slowmode=1; delay(200);}
-      controlx(0,SSPEED);
+      if(!slowmode){modeSW(1);} controlx(0,SPEED);
     } else if(!digitalRead(IR1) && !digitalRead(IR3)){
-      controlx(0,0);
+      if(slowmode){modeSW(0);} controlx(SPEED,SPEED);
     }
   }
+  delay(T_DELAY);
+  controlx(0,0);
+  delay(T_DELAY);
 }
